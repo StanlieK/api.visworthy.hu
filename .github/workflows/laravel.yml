@@ -21,7 +21,7 @@ jobs:
       - name: Update Composer
         run: composer self-update
       - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --no-dev
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
       - name: Generate key
         run: php artisan key:generate
       - name: Directory Permissions
@@ -35,18 +35,16 @@ jobs:
           DB_PASSWORD: "${{ secrets.DB_PASSWORD }}"
           DB_PORT: "${{ secrets.DB_PORT }}"
         run: php artisan migrate --pretend
+      - name: Remove .env file
+        run: rm -f .env
       - name: Upload backend
-        uses: sebastianpopp/ftp-action@v2.0.0
+        # You may pin to the exact commit or the version.
+        # uses: sebastianpopp/git-ftp-action@33a94c0e0fce59ca477baa9d1748a5f2e53fb429
+        uses: sebastianpopp/git-ftp-action@3.0.0
         with:
-          # FTP host
-          host: "${{ secrets.FTP_HOST }}"
-          # FTP user
+          # URL
+          url: "ftp://${{ secrets.FTP_HOST }}"
+          # FTP login name
           user: "${{ secrets.FTP_USERNAME }}"
           # FTP password
           password: "${{ secrets.FTP_PASSWORD }}"
-          # Force SSL encryption
-#          forceSsl: # optional, default is false
-#          # Local directory
-#          localDir: # optional, default is .
-#          # Remote directory
-#          remoteDir: # optional, default is .
